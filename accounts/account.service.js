@@ -177,3 +177,71 @@ async function create(params) {
 
     return basicDetails(account);
 }
+
+async function update(id, params) {
+    const account = await getAccount(id);
+
+    // validate if email was changed
+    if (params.email && account.email !== params.email && await db.Account.findOne({ where: { email: params.email } })) {
+        throw 'Email "' + params.email + '" is already taken';
+    }
+
+    // hash password if it was entered
+    if (params.password) {
+        params.passwordHash = await hash(params.password);
+    }
+
+    // copy params to account and save
+    Object.assign(account, params);
+    account.updated = Date.now();
+    await account.save();
+
+    return basicDetails(account);
+}
+
+async function _delete(id) {
+    const account = await getAccount(id);
+    await account.destroy();
+}
+
+// helper functions
+
+async function getAccount(id) {
+    const account = await db.Account.findByPk(id);
+    if (!account) throw 'Account not found';
+    return account;
+}
+
+async function getRefreshToken(token) {
+    const refreshToken = await db.RefreshToken.findOne({ where: { token } });
+    if (!refreshToken || !refreshToken.isActive) throw 'Invalid token';
+    return refreshToken;
+}
+
+async function hash(password) {
+    return await bcrypt.hash(password, 10);
+}
+
+function generateJwtToken(account) {
+    // create a jwt token containing the account id that expires in 15 minutes
+    return jwt.sign({ sub: account.id, id: account.id }, config.secret, { expiresIn: '15m' });
+}
+
+function generateRefreshToken(account, ipAddress) {
+    // create a refresh token that expires in 7 days
+    return new db.RefreshToken({
+        accountId: account.id,
+        token: randomTokenString(),
+        expires: new Date(Date.now() + 7*24*60*60*1000),
+        createdByIp: ipAddress
+    });
+}
+
+function randomTokenString() {
+    return crypto.randomBytes(40).toString('hex');
+}
+
+function basicDetails(account) {
+    const { id, title, firstName, lastName, email, role, created, updated, isVerified } = account;
+    return { id, title, firstName, lastName, email, role, created, updated, isVerified };
+}
