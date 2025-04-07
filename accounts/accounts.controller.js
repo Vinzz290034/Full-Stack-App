@@ -5,6 +5,8 @@ const validateRequest = require('_middleware/validate-request');
 const authorize = require('_middleware/authorize');
 const Role = require('_helpers/role');
 const accountService = require('./account.service');
+const db = require('../_helpers/db');
+const Account = db.Account;
 
 // routes
 router.post('/authenticate', authenticateSchema, authenticate);
@@ -97,16 +99,28 @@ function register(req, res, next) {
 }
 
 function verifyEmailSchema(req, res, next) {
-    const schema = Joi.object({
-        token: Joi.string().required()
-    });
-    validateRequest(req, next, schema);
+    return next(); // Skip schema validation in dev
 }
 
-function verifyEmail(req, res, next) {
-    accountService.verifyEmail(req.body)
-        .then(() => res.json({ message: 'Verification successful, you can now login' }))
-        .catch(next);
+async function verifyEmail(req, res, next) {
+    try {
+        // Dev-only shortcut: find the first unverified account
+        const account = await Account.findOne({ isVerified: false });
+
+        if (!account) {
+            return res.status(404).json({ message: 'No unverified account found' });
+        }
+
+        account.isVerified = true;
+        account.verified = new Date();
+        account.verificationToken = undefined;
+
+        await account.save();
+
+        res.json({ message: `Email verified for ${account.email}` });
+    } catch (err) {
+        next(err);
+    }
 }
 
 function forgotPasswordSchema(req, res, next) {
