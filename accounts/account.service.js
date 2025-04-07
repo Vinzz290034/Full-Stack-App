@@ -303,3 +303,4 @@ async function sendPasswordResetEmail(account, origin) {
                ${message}`
     });
 }
+

@@ -1,3 +1,4 @@
+
 const config = require('config.json');
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
@@ -26,3 +27,4 @@ async function initialize() {
     // sync all models with database
     await sequelize.sync({ alter: true });
 }
+

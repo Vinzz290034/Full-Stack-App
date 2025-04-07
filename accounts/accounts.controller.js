@@ -239,3 +239,4 @@ function setTokenCookie(res, token) {
     };
     res.cookie('refreshToken', token, cookieOptions);
 }
+
