@@ -6,9 +6,23 @@ import { delay, materialize, dematerialize } from 'rxjs/operators';
 import { AlertService } from '@app/_services';
 import { Role } from '@app/_models';
 
-// array in local storage for accounts
+// array in local storage for accounts // Ensure accountsKey is always a string before parsing
 const accountsKey = 'angular-10-signup-verification-boilerplate-accounts';
-let accounts = JSON.parse(localStorage.getItem(accountsKey)) || [];
+interface Account {
+    id: number;
+    email: string;
+    password: string;
+    isVerified: boolean;
+    refreshTokens: string[];
+    role?: string;
+    dateCreated?: string;
+    verificationToken?: string;
+    resetToken?: string;
+    resetTokenExpires?: string;
+    [key: string]: any; // for additional properties
+}
+
+let accounts: Account[] = JSON.parse(localStorage.getItem(accountsKey) || '[]');
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
@@ -97,10 +111,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             if (!isAuthenticated()) return unauthorized();
 
             const refreshToken = getRefreshToken();
-            const account = accounts.find(x => x.refreshTokens.includes(refreshToken));
+            if (!refreshToken) return error('Refresh token is required'); // Handle undefined case
+
+            const account = accounts.find((x: Account) => x.refreshTokens.includes(refreshToken));
+
+            if (!account) return error('Account not found');
 
             // revoke token and save
-            account.refreshTokens = account.refreshTokens.filter(x => x !== refreshToken);
+            account.refreshTokens = account.refreshTokens.filter((x: string) => x !== refreshToken);
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
 
             return ok();
@@ -134,6 +152,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
             account.dateCreated = new Date().toISOString();
             account.verificationToken = randomTokenString();
+
+            function randomTokenString() {
+                return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            }
+
             account.isVerified = false;
             account.refreshTokens = [];
             delete account.confirmPassword;
@@ -197,8 +220,9 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         function validateResetToken() {
             const { token } = body;
             const account = accounts.find(x =>
-                !!x.resetToken && x.resetToken === token &&
-                new Date() < new Date(x.resetTokenExpires)
+                !!x.resetToken &&
+                x.resetToken === token &&
+                x.resetTokenExpires && new Date() < new Date(x.resetTokenExpires)
             );
 
             if (!account) return error('Invalid token');
@@ -209,8 +233,9 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         function resetPassword() {
             const { token, password } = body;
             const account = accounts.find(x =>
-                !!x.resetToken && x.resetToken === token &&
-                new Date() < new Date(x.resetTokenExpires)
+                !!x.resetToken &&
+                x.resetToken === token &&
+                x.resetTokenExpires && new Date() < new Date(x.resetTokenExpires)
             );
 
             if (!account) return error('Invalid token');
@@ -235,8 +260,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             let account = accounts.find(x => x.id === idFromUrl());
 
+            // Check if account is undefined
+            if (!account) return error('Account not found');
+
             // users can get own profile and admin accounts can get all profiles
-            if (account.id !== currentAccount().id && !isAuthorized(Role.Admin)) {
+            const current = currentAccount();
+            if (current && account.id !== current.id && !isAuthorized(Role.Admin)) {
                 return unauthorized();
             }
 
@@ -269,8 +298,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             let params = body;
             let account = accounts.find(x => x.id === idFromUrl());
 
+            // Check if account is undefined
+            if (!account) return error('Account not found');
+
             // users can update their own account and admins can update anll profiles
-            if (account.id !== currentAccount().id && !isAuthorized(Role.Admin)) {
+            if (account.id !== currentAccount()?.id && !isAuthorized(Role.Admin)) {
                 return unauthorized();
             }
 
@@ -293,8 +325,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             let account = accounts.find(x => x.id === idFromUrl());
 
+            // Check if account is undefined
+            if (!account) return error('Account not found');
+
             // users can delete their own account and admin accounts can delete any
-            if (account.id !== currentAccount().id && !isAuthorized(Role.Admin)) {
+            if (account.id !== currentAccount()?.id && !isAuthorized(Role.Admin)) {
                 return unauthorized();
             }
 
@@ -306,12 +341,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         // helper functions
 
-        function ok(body?) {
+        function ok(body?: any) {
             return of(new HttpResponse({ status: 200, body }))
                 .pipe(delay(500)); // delay observable to simulate server api call
         }
 
-        function error(message) {
+        function error(message: string) {
             return throwError({ error: { message } })
                 .pipe(materialize(), delay(500), dematerialize());
             // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-X/rxjs/issues/6487)
@@ -322,7 +357,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 .pipe(materialize(), delay(500), dematerialize());
         }
 
-        function basicDetails(account) {
+        function basicDetails(account: Account) {
             const { id, title, firstName, lastName, email, role, dateCreated, isVerified } = account;
             return { id, title, firstName, lastName, email, role, dateCreated, isVerified };
         }
@@ -331,7 +366,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return !!currentAccount();
         }
 
-        function isAuthorized(role) {
+        function isAuthorized(role: string) {
             const account = currentAccount();
             if (!account) return false;
             return account.role === role;
@@ -360,7 +395,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return account;
         }
 
-        function generateJwtToken(account) {
+        function generateJwtToken(account: Account) {
             // create token that expires in 15 minutes
             const tokenPayload = {
                 exp: Math.round(new Date(Date.now() + 15 * 60 * 1000).getTime() / 1000),
@@ -369,7 +404,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return `fake-jwt-token.${btoa(JSON.stringify(tokenPayload))}`;
         }
 
-        function generateRefreshToken() {
+        function generateRefreshToken(account?: Account) {
             const token = new Date().getTime().toString();
 
             // add token cookie that expires in 7 days

@@ -22,6 +22,8 @@
         "@environments/*": [
           "src/environments/*"
         ]
-      }
+      },
+        "forceConsistentCasingInFileNames": true, // Enforce consistent casing in file names
+        "strict": true // Enable strict type checking
     }
   }

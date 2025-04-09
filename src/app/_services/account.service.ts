@@ -11,18 +11,21 @@ const baseUrl = `${environment.apiUrl}/accounts`;
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
-    private accountSubject: BehaviorSubject<Account>;
-    public account: Observable<Account>;
+    private accountSubject: BehaviorSubject<Account | null>;
+    public account: Observable<Account | null>;
 
     constructor(
         private router: Router,
         private http: HttpClient
     ) {
-        this.accountSubject = new BehaviorSubject<Account>(null);
+        this.accountSubject = new BehaviorSubject<Account | null>(null);
         this.account = this.accountSubject.asObservable();
     }
 
     public get accountValue(): Account {
+        if (!this.accountSubject.value) {
+            throw new Error('Account value is null');
+        }
         return this.accountSubject.value;
     }
 
@@ -102,15 +105,19 @@ export class AccountService {
                 // auto logout if the logged in account was deleted
                 if (id === this.accountValue?.id) {
                     this.logout();
-                }));
+                }
+            }));
     }
 
     // helper methods
 
-    private refreshTokenTimeout;
+    private refreshTokenTimeout: ReturnType<typeof setTimeout>;
 
     private startRefreshTokenTimer() {
         // parse json object from base64 encoded jwt token
+        if (!this.accountValue.jwtToken) {
+            throw new Error('JWT token is undefined');
+        }
         const jwtToken = JSON.parse(atob(this.accountValue.jwtToken.split('.')[1]));
 
         // set a timeout to refresh the token a minute before it expires

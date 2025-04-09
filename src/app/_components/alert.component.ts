@@ -76,7 +76,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
     // The cssClasses() method returns a corresponding bootstrap alert class for each of the alert types, if you're using something other than bootstrap you can change the CSS classes returned to suit your application.
     cssClasses(alert: Alert): string {
-        if (!alert) return;
+        if (!alert) return ''; // Return an empty string if alert is undefined
 
         const classes = ['alert', 'alert-dismissable'];
 
@@ -90,7 +90,7 @@ export class AlertComponent implements OnInit, OnDestroy {
         classes.push(alertTypeClass[alert.type]);
 
         if (alert.fade) {
-            classes.push('fade');
+            classes.push(alertTypeClass[alert.type]);
         }
 
         return classes.join(' ');

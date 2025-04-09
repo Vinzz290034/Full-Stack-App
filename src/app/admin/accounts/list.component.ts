@@ -18,6 +18,13 @@ export class ListComponent implements OnInit {
 
     deleteAccount(id: string) {
         const account = this.accounts.find(x => x.id === id);
+
+        // Check if account is undefined
+        if (!account) {
+            console.error(`Account with id ${id} not found`);
+            return;
+        }
+
         account.isDeleting = true;
         this.accountService.delete(id)
             .pipe(first())

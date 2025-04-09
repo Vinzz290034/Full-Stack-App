@@ -1,9 +1,9 @@
 export class Alert {
     id: string = '';
-    type: AlertType = AlertType.Info; // Replace with a default value from your `AlertType` enum
+    type: AlertType; // Replace with a default value from your `AlertType` enum
     message: string = '';
     autoClose: boolean = false;
-    keepAfterRouteChange: boolean = false;
+    keepAfterRouteChange?: boolean;
     fade: boolean = false;
 
     constructor(init?: Partial<Alert>) {

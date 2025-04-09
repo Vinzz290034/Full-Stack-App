@@ -3,7 +3,9 @@
     "strictPropertyInitialization": false,
     "baseUrl": "./",
     "paths": {
-      "@app/*": ["src/app/*"]
+      "@environments/*": ["src/environments/*"],
+      "@app/*": ["src/app/*"],
+      "@angular/*": ["node_modules/@angular/*"]
     },
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
