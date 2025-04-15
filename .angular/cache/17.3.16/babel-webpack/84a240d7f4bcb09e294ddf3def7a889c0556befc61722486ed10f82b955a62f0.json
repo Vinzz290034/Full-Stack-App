@@ -1,0 +1,1 @@
+{"ast":null,"code":"\"use strict\";\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.Role = void 0;\nvar Role = /*#__PURE__*/function (Role) {\n  Role[\"User\"] = \"User\";\n  Role[\"Admin\"] = \"Admin\";\n  return Role;\n}(Role || (exports.Role = Role = {}));","map":null,"metadata":{},"sourceType":"script","externalDependencies":[]}
