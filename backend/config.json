@@ -1,0 +1,19 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "roots",
+        "password": "",
+        "database": "user-management-system"
+        },
+        "secret": "TcxtoIgRRbUqqgW174x1zAA==",
+        "emailFrom": "info@user-management-system.com",
+        "smtpOptions": {  
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "auth": {
+        "user": "ladarius66@ethereal.email",
+        "pass": "HaCUhbSy1XEmTpTExr"
+        }
+        }
+    }
