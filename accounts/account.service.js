@@ -103,7 +103,9 @@ async function register(params, origin) {
 }
 
 async function verifyEmail({ token }) {
-    const account = await db.Account.findOne({ where: { verificationToken: token } });
+    const account = await db.Account.findOne({where: {verificationToken: { [Op.ne]: null },
+        verified: null
+    }});
 
     if (!account) throw 'Verification failed';
 
