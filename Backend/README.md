@@ -1,19 +1,44 @@
-# Backend API for User Authentication System
+# Employee Management System - Backend API
 
-This is a Node.js backend API built with Express.js that provides user authentication functionality including email verification, JWT authentication, and password reset features.
+This is a full-stack employee management system built with Node.js, Express, MySQL, and Angular. The backend provides a RESTful API for user authentication, employee management, department management, workflow tracking, and request handling.
+
+## Key Features
+
+- **User Authentication**
+  - Email-based registration with verification
+  - JWT authentication with access + refresh tokens
+  - Role-based access control (Admin/User)
+  - Password reset functionality
+
+- **Employee Management**
+  - CRUD operations for employees
+  - Department assignment and transfers
+  - Employee status tracking (active, on leave, terminated)
+
+- **Department Management**
+  - Create and manage departments
+  - Track employee count and department hierarchy
+
+- **Workflow System**
+  - Track employee-related actions (transfers, status changes, etc.)
+  - Status management (Pending/Approved/Rejected)
+  - Audit trail of all actions
+
+- **Request System**
+  - Employees can submit requests (equipment, leave, resources)
+  - Admin approval workflow
+  - Status tracking for requests
 
 ## Tech Stack
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MySQL
-- **ORM**: Sequelize
+- **Backend**: Node.js with Express
+- **Database**: MySQL with Sequelize ORM
 - **Authentication**: JWT (JSON Web Tokens)
-- **Email Service**: Nodemailer
 - **API Documentation**: Swagger/OpenAPI
-- **Validation**: Joi
-- **Security**: bcryptjs for password hashing
-- **Development**: Nodemon for hot-reloading
+- **Logging**: Winston
+- **Security**: Helmet, CORS, rate limiting
+- **Email**: Nodemailer
+- **Validation**: Joi, Express Validator
 
 ## Prerequisites
 
@@ -22,100 +47,140 @@ Before you begin, ensure you have the following installed:
 - Node.js (v14 or later recommended)
 - npm (comes with Node.js)
 - MySQL Server (v5.7 or later)
+- Git (for version control)
 
 ## Setup Instructions
 
-1. **Clone the repository** (if you haven't already)
-   ```bash
-   git clone <repository-url>
-   cd Full-Stack-App/Backend
-   ```
+### 1. Clone the Repository
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Database Setup**
-   - Create a new MySQL database named `node-mysql-signup-verification-api`
-   - Update the database configuration in `config.json` with your MySQL credentials:
-     ```json
-     {
-       "database": {
-         "host": "localhost",
-         "port": 3306,
-         "user": "your_username",
-         "password": "your_password",
-         "database": "node-mysql-signup-verification-api"
-       },
-       "secret": "your_jwt_secret_key",
-       "emailFrom": "your-email@example.com",
-       "smtpOptions": {
-         "host": "your-smtp-host",
-         "port": 587,
-         "auth": {
-           "user": "your-email@example.com",
-           "pass": "your-email-password"
-         }
-       }
-     }
-     ```
-
-4. **Environment Variables**
-   The application uses the following environment variables:
-   - `NODE_ENV`: Set to 'development' or 'production'
-   - `PORT`: Port to run the server on (default: 4000 in development)
-
-## Running the Application
-
-### Development Mode
 ```bash
-# Install nodemon globally if you haven't
-npm install -g nodemon
+git clone https://github.com/yourusername/Full-Stack-App.git
+cd Full-Stack-App/Backend
+```
 
-# Start the development server
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Setup
+
+1. Copy the `.env.example` file to `.env`:
+   ```bash
+   copy .env.example .env
+   ```
+
+2. Update the `.env` file with your configuration:
+   ```env
+   # Server Configuration
+   NODE_ENV=development
+   PORT=4000
+   
+   # Database Configuration
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_NAME=employee_management
+   DB_USER=root
+   DB_PASSWORD=your_mysql_password
+   
+   # JWT Configuration
+   JWT_SECRET=your_jwt_secret_key_here
+   JWT_REFRESH_SECRET=your_refresh_token_secret_here
+   JWT_EXPIRATION=1h
+   JWT_REFRESH_EXPIRATION=7d
+   
+   # Email Configuration (for password reset, etc.)
+   SMTP_HOST=smtp.ethereal.email
+   SMTP_PORT=587
+   SMTP_USER=your_ethereal_username
+   SMTP_PASSWORD=your_ethereal_password
+   EMAIL_FROM=noreply@employeeapp.com
+   
+   # API Configuration
+   API_BASE_URL=/api
+   API_DOCS_URL=/api-docs
+   
+   # Security
+   CORS_ORIGINS=http://localhost:4200,http://localhost:3000
+   RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
+   RATE_LIMIT_MAX=100
+   
+   # Logging
+   LOG_LEVEL=debug
+   LOG_TO_FILE=true
+   ```
+
+### 4. Database Setup
+
+1. Create a new MySQL database:
+   ```sql
+   CREATE DATABASE employee_management;
+   ```
+
+2. Run database migrations:
+   ```bash
+   npm run migrate
+   ```
+
+3. (Optional) Seed the database with initial data:
+   ```bash
+   npm run seed
+   ```
+
+### 5. Start the Development Server
+
+```bash
+# Using npm script
 npm run start:dev
+
+# Or using the PowerShell script (Windows)
+.\start-server.ps1
 ```
 
-### Production Mode
-```bash
-# Install production dependencies only
-npm install --production
-
-# Start the server
-npm start
-```
+The API will be available at `http://localhost:4000`
 
 ## API Documentation
 
 Once the server is running, you can access the interactive API documentation at:
+- Swagger UI: `http://localhost:4000/api-docs`
+- API Base URL: `http://localhost:4000/api`
+
+## Project Structure
+
 ```
-http://localhost:4000/api-docs
+backend/
+├── config/                 # Configuration files
+├── controllers/            # Route controllers
+├── middleware/             # Custom middleware
+├── models/                 # Database models
+├── routes/                 # Route definitions
+├── services/               # Business logic
+├── utils/                  # Utility classes and functions
+├── validations/            # Request validation schemas
+├── .env                    # Environment variables
+├── .env.example            # Example environment variables
+├── server.js               # Application entry point
+└── package.json            # Project metadata and dependencies
 ```
 
-## Available Endpoints
+## Available Scripts
 
-- `POST /accounts/authenticate` - Authenticate user
-- `POST /accounts/refresh-token` - Refresh access token
-- `POST /accounts/revoke-token` - Revoke refresh token
-- `POST /accounts/register` - Register a new user
-- `POST /accounts/verify-email` - Verify email
-- `POST /accounts/forgot-password` - Request password reset
-- `POST /accounts/validate-reset-token` - Validate reset token
-- `POST /accounts/reset-password` - Reset password
-- `GET /accounts` - Get all users (admin only)
-- `GET /accounts/:id` - Get user by id
-- `POST /accounts` - Create user (admin only)
-- `PUT /accounts/:id` - Update user
-- `DELETE /accounts/:id` - Delete user
+- `npm start` - Start the production server
+- `npm run start:dev` - Start the development server with hot-reload
+- `npm run migrate` - Run database migrations
+- `npm run seed` - Seed the database with initial data
+- `npm test` - Run tests
+- `npm run lint` - Run ESLint
 
 ## Security Considerations
 
-- Always use HTTPS in production
-- Keep your JWT secret key secure
-- Use strong database credentials
-- Update the default email configuration
-- Regularly update dependencies for security patches
+- All passwords are hashed using bcrypt
+- JWT tokens are used for authentication
+- Rate limiting is enabled to prevent brute force attacks
+- CORS is configured to only allow requests from trusted origins
+- Helmet middleware is used to secure HTTP headers
+- Input validation is implemented for all API endpoints
 
 ## License
 
