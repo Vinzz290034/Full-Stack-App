@@ -1,1 +1,0 @@
-# Elvinia's Frontend Full-Stack-App
