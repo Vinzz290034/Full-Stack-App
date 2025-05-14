@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { map, catchError, finalize } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Account } from '../_models';
@@ -25,11 +25,18 @@ export class AccountService {
   
   login(email: string, password: string) {
     return this.http.post<any>(`${baseUrl}/authenticate`, { email, password }, { withCredentials: true })
-      .pipe(map(account => {
-        this.accountSubject.next(account);
-        this.startRefreshTokenTimer();
-        return account;
-      }));
+      .pipe(
+        map(account => {
+          // Store user details and jwt token in local storage
+          this.accountSubject.next(account);
+          this.startRefreshTokenTimer();
+          return account;
+        }),
+        catchError(error => {
+          console.error('Login error:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   logout() {
@@ -41,11 +48,18 @@ export class AccountService {
 
   refreshToken() {
     return this.http.post<any>(`${baseUrl}/refresh-token`, {}, { withCredentials: true })
-      .pipe(map((account) => {
-        this.accountSubject.next(account);
-        this.startRefreshTokenTimer();
-        return account;
-      }));
+      .pipe(
+        map(account => {
+          this.accountSubject.next(account);
+          this.startRefreshTokenTimer();
+          return account;
+        }),
+        catchError(error => {
+          // If refresh token fails, log the user out
+          this.logout();
+          return throwError(() => error);
+        })
+      );
   }
 
   register(account: Account) {

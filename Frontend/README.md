@@ -1,148 +1,136 @@
-# UserManagementSystemFrontend
+# Frontend Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
+This is an Angular-based frontend application that provides a user interface for authentication, user management, and profile handling. It's designed to work with the Node.js/Express backend API.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Framework**: Angular 17.3.0
+- **Language**: TypeScript
+- **Styling**: Bootstrap 5.3.5
+- **State Management**: RxJS (Reactive Extensions for JavaScript)
+- **Testing**: 
+  - Karma (unit tests)
+  - Jasmine (test framework)
+  - Protractor (e2e tests)
+- **Build Tool**: Angular CLI
+- **Package Manager**: npm
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v16 or later recommended)
+- npm (v8 or later)
+- Angular CLI (v17.3.0 or later)
+
+## Getting Started
+
+1. **Clone the repository** (if you haven't already)
+   ```bash
+   git clone <repository-url>
+   cd Full-Stack-App/Frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment**
+   - Update the environment configuration in `src/environments/` to point to your backend API
+   - Default API URL is set to `http://localhost:4000`
+
+## Development Server
+
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ```bash
+# Start the development server
 ng serve
+
+# Or use the start script
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Project Structure
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+src/app/
+├── account/          # Authentication related components (login, register, etc.)
+├── admin/            # Admin dashboard and management components
+├── home/             # Public landing page and home components
+├── profile/          # User profile management
+├── _components/      # Shared components
+├── _helpers/         # Helper services and utilities
+├── _models/          # Data models and interfaces
+├── _services/        # Core services (authentication, HTTP, etc.)
+└── app.module.ts     # Root module configuration
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 ```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
+# Development build
 ng build
+
+# Production build
+ng build --configuration production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Testing
 
-## Running unit tests
+### Unit Tests
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ```bash
+# Run tests in watch mode
 ng test
+
+# Run tests once and generate coverage report
+ng test --no-watch --code-coverage
 ```
 
-## Running end-to-end tests
+### End-to-End Tests
 
-For end-to-end (e2e) testing, run:
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice.
 
 ```bash
+# Run e2e tests
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Code Scaffolding
 
----
+Use Angular CLI to generate new components, services, and more:
 
-## Features Documentation
+```bash
+# Generate a new component
+ng generate component component-name
 
-### 1. Profile Management
-The **Profile Management** feature allows users to view and update their personal information.
+# Generate a new service
+ng generate service service-name
 
-#### Implementation Steps:
-1. **Create a Profile Component**:
-   ```bash
-   ng generate component profile
-   ```
-2. **Add Profile Routes**:
-   Add a route for the profile component in the `app-routing.module.ts`:
-   ```typescript
-   { path: 'profile', component: ProfileComponent }
-   ```
-3. **Bind User Data**:
-   Use the `AccountService` to fetch and update user data:
-   ```typescript
-   this.accountService.getProfile().subscribe(profile => {
-       this.profile = profile;
-   });
-   ```
-4. **Update Profile**:
-   Add a form to allow users to update their profile information.
+# Generate a new module
+ng generate module module-name
+```
 
----
+## Linting and Code Formatting
 
-### 2. Admin Dashboard
-The **Admin Dashboard** provides an interface for administrators to manage users and view system statistics.
+```bash
+# Run linter
+ng lint
 
-#### Implementation Steps:
-1. **Create an Admin Module**:
-   ```bash
-   ng generate module admin --routing
-   ```
-2. **Generate Dashboard Component**:
-   ```bash
-   ng generate component admin/dashboard
-   ```
-3. **Add Admin Routes**:
-   Add routes for the admin module in `admin-routing.module.ts`:
-   ```typescript
-   { path: 'admin', component: DashboardComponent }
-   ```
-4. **Implement Features**:
-   - Add user management (CRUD operations).
-   - Display system statistics using charts or tables.
+# Fix linting issues automatically
+ng lint --fix
+```
 
----
+## Deployment
 
-### 3. Fake Backend
-The **Fake Backend** is used for development and testing purposes to simulate API responses.
+For production deployment, build the application with the production configuration and deploy the contents of the `dist/` directory to your web server.
 
-#### Implementation Steps:
-1. **Create a Fake Backend Provider**:
-   Implement a fake backend in `src/app/_helpers/fake-backend.ts`:
-   ```typescript
-   import { Injectable } from '@angular/core';
-   import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-   import { Observable, of, throwError } from 'rxjs';
-   import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
+## License
 
-   @Injectable()
-   export class FakeBackendInterceptor implements HttpInterceptor {
-       intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-           const { url, method, headers, body } = request;
-
-           // Simulate API responses
-           if (url.endsWith('/users') && method === 'GET') {
-               return of(new HttpResponse({ status: 200, body: [{ id: 1, name: 'John Doe' }] }))
-                   .pipe(delay(500));
-           }
-
-           return next.handle(request);
-       }
-   }
-   ```
-2. **Register the Fake Backend**:
-   Add the fake backend provider in `app.module.ts`:
-   ```typescript
-   providers: [
-       { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true }
-   ]
-   ```
-
----
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT

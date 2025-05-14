@@ -121,7 +121,10 @@ function forgotPasswordSchema(req, res, next) {
 
 function forgotPassword(req, res, next) {
     accountService.forgotPassword(req.body, req.get('origin'))
-    .then(() => res.json({ message: 'Please check your email for password reset instructions' }))
+    .then(response => {
+        const message = response?.message || 'If your email is registered, you will receive a password reset link';
+        res.json({ message });
+    })
     .catch(next);
 }
 

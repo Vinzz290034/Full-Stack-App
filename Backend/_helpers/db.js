@@ -5,26 +5,69 @@ const { Sequelize } = require('sequelize');
 
 module.exports = db = {};
 
-initialize();
+initialize().catch(err => {
+    console.error('Failed to initialize database:');
+    console.error(err);
+    process.exit(1);
+});
 
 async function initialize() {
-    // create db if it doesn't already exist
+    console.log('Initializing database...');
     const { host, port, user, password, database } = config.database;
-    const connection = await mysql.createConnection({ host, port, user, password });
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+    
+    try {
+        // Connect to MySQL server
+        console.log(`Connecting to MySQL at ${host}:${port}...`);
+        const connection = await mysql.createConnection({ 
+            host, 
+            port, 
+            user, 
+            password,
+            connectTimeout: 10000
+        });
+        
+        console.log('MySQL server connected, checking database...');
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+        console.log(`Database '${database}' verified`);
+        await connection.end();
 
-    // connect to db
-    const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
+        // Connect to the database
+        console.log('Initializing Sequelize...');
+        const sequelize = new Sequelize(database, user, password, { 
+            dialect: 'mysql',
+            logging: console.log,
+            define: {
+                timestamps: true,
+                underscored: true
+            }
+        });
 
-    // init models and add them to the exported db object
-    db.Account = require('../accounts/account.model')(sequelize);
-    db.RefreshToken = require('../accounts/refresh-token.model')(sequelize);
+        // Test the connection
+        console.log('Testing database connection...');
+        await sequelize.authenticate();
+        console.log('Database connection successful!');
 
-    // define relationships
-    db.Account.hasMany(db.RefreshToken, { onDelete: 'CASCADE' });
-    db.RefreshToken.belongsTo(db.Account);
+        // Initialize models
+        console.log('Initializing models...');
+        db.Account = require('../accounts/account.model')(sequelize);
+        db.RefreshToken = require('../accounts/refresh-token.model')(sequelize);
 
-    // sync all models with database
-    await sequelize.sync({ alter: true });
+        // Define relationships
+        db.Account.hasMany(db.RefreshToken, { onDelete: 'CASCADE' });
+        db.RefreshToken.belongsTo(db.Account);
+
+        // Sync all models
+        console.log('Syncing database...');
+        await sequelize.sync({ alter: true });
+        console.log('Database sync completed successfully!');
+        
+    } catch (error) {
+        console.error('Database initialization failed:');
+        console.error('Error details:', error.message);
+        if (error.original) {
+            console.error('Original error:', error.original);
+        }
+        throw error;
+    }
 }
 
