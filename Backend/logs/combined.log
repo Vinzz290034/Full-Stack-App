@@ -10,3 +10,22 @@
 2025-05-14 18:43:27 [32minfo[39m: Server is running on port 4000
 2025-05-14 18:43:27 [32minfo[39m: Environment: development
 2025-05-14 18:43:27 [32minfo[39m: API Docs: http://localhost:4000undefined
+2025-05-15 11:15:15 [32minfo[39m: Application starting...
+2025-05-15 11:15:15 [34mdebug[39m: Environment:
+2025-05-15 11:15:20 [32minfo[39m: API documentation available at /api-docs
+2025-05-15 11:15:20 [32minfo[39m: Server is running on port 4000
+2025-05-15 11:15:20 [32minfo[39m: Environment: development
+2025-05-15 11:15:20 [32minfo[39m: API Docs: http://localhost:4000undefined
+2025-05-15 11:20:32 [32minfo[39m: Application starting...
+2025-05-15 11:20:32 [34mdebug[39m: Environment:
+2025-05-15 11:20:34 [32minfo[39m: API documentation available at /api-docs
+2025-05-15 11:20:34 [32minfo[39m: Server is running on port 4000
+2025-05-15 11:20:34 [32minfo[39m: Environment: development
+2025-05-15 11:20:34 [32minfo[39m: API Docs: http://localhost:4000undefined
+2025-05-15 12:01:59 [32minfo[39m: Application starting...
+2025-05-15 12:01:59 [34mdebug[39m: Environment:
+2025-05-15 12:02:03 [32minfo[39m: API documentation available at /api-docs
+2025-05-15 12:02:03 [32minfo[39m: Server is running on port 4000
+2025-05-15 12:02:03 [32minfo[39m: Environment: development
+2025-05-15 12:02:03 [32minfo[39m: API Docs: http://localhost:4000undefined
+2025-05-15 12:03:28 [32minfo[39m: ::1 - - [15/May/2025:04:03:28 +0000] "POST /accounts/register HTTP/1.1" 404 68 "-" "PostmanRuntime/7.39.1"

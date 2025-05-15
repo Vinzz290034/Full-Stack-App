@@ -16,29 +16,44 @@ async function initialize() {
     const { host, port, user, password, database } = config.database;
     
     try {
-        // Connect to MySQL server
-        console.log(`Connecting to MySQL at ${host}:${port}...`);
-        const connection = await mysql.createConnection({ 
-            host, 
-            port, 
-            user, 
-            password,
-            connectTimeout: 10000
-        });
-        
-        console.log('MySQL server connected, checking database...');
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-        console.log(`Database '${database}' verified`);
-        await connection.end();
-
-        // Connect to the database
+        // Initialize Sequelize without database first to check server connection
         console.log('Initializing Sequelize...');
-        const sequelize = new Sequelize(database, user, password, { 
+        const tempSequelize = new Sequelize('', user, password, {
+            host,
+            port,
             dialect: 'mysql',
             logging: console.log,
             define: {
                 timestamps: true,
                 underscored: true
+            },
+            dialectOptions: {
+                multipleStatements: true
+            },
+            retry: {
+                max: 3,
+                timeout: 30000 // 30 seconds
+            }
+        });
+
+        // Create database if it doesn't exist
+        console.log('Checking database...');
+        await tempSequelize.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+        await tempSequelize.close();
+
+        // Reconnect with the database specified
+        const sequelize = new Sequelize(database, user, password, {
+            host,
+            port,
+            dialect: 'mysql',
+            logging: console.log,
+            define: {
+                timestamps: true,
+                underscored: true
+            },
+            retry: {
+                max: 3,
+                timeout: 30000 // 30 seconds
             }
         });
 
