@@ -1,22 +1,20 @@
 #!/bin/bash
 
-echo "Starting build process..."
+# Ensure we're in the correct directory
+cd "$1" || exit 1
 
-cd Frontend || {
-    echo "Failed to change directory to Frontend"
-    exit 1
-}
-
+# Install dependencies
 echo "Installing dependencies..."
-npm install || {
-    echo "Failed to install dependencies"
-    exit 1
-}
+npm install || exit 1
 
+# Build the application
 echo "Building Angular application..."
-npm run build -- --prod || {
-    echo "Failed to build application"
-    exit 1
-}
+npm run build -- --configuration production || exit 1
+
+# Copy build output to root dist directory
+echo "Copying build output..."
+rm -rf ../dist
+mkdir -p ../dist
+cp -r dist/* ../dist/ || exit 1
 
 echo "Build completed successfully!"
