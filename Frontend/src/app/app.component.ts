@@ -24,11 +24,15 @@ export class AppComponent implements OnInit {
                         error: (error) => {
                             console.error('Error restoring account:', error);
                             localStorage.removeItem('account');
+                            // Clear any existing token to prevent unauthorized token revocation attempts
+                            this.accountService.logout();
                         }
                     });
             } catch (error) {
                 console.error('Error parsing stored account:', error);
                 localStorage.removeItem('account');
+                // Clear any existing token to prevent unauthorized token revocation attempts
+                this.accountService.logout();
             }
         }
     }

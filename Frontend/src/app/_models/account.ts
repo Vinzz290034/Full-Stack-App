@@ -1,6 +1,6 @@
 import { Role } from './role';
 export class Account {
-    id?: number;     // string or number
+    id?: string;
     title?: string;
     firstName?: string;
     lastName?: string;
@@ -14,6 +14,7 @@ export class Account {
     password?: string;
     resetToken?: string; 
     resetTokenExpires?: string;
+    avatarUrl?: string;
 
     constructor() {
         this.refreshTokens = []; 

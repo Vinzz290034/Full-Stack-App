@@ -7,7 +7,6 @@ function model(sequelize) {
         employeeId: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
             field: 'employee_id'
         },
         position: {

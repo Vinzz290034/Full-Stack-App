@@ -221,105 +221,38 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function getAccounts() {
         if (!isAuthenticated()) return unauthorized();
         return ok(accounts.map((x: Account) => basicDetails(x)));
-      }
-      
+    }
+
     function getAccountById() {
-        if (!isAuthenticated()) return unauthorized();
-    
         const id = idFromUrl();
-    
-        if (!id) {
-            return error('Account ID is required');
-        }
-    
-        // Use optional chaining and strict type check
         const account = accounts.find((x: Account) => x.id === id);
-    
         if (!account) return error('Account not found');
-    
-        const current = currentAccount();
-        if (!current || current.id === undefined) {
-            return unauthorized();
-        }
-    
-        if (account.id !== current.id && !isAuthorized(Role.Admin)) {
-            return unauthorized();
-        }
-    
         return ok(basicDetails(account));
     }
-    
 
-    function createAccount() {
-        if (!isAuthorized(Role.Admin)) return unauthorized();
-      
-        const account = body;
-      
-        if (accounts.find((x: Account) => x.email === account.email)) {
-          return error(`Email ${account.email} is already registered`);
-        }
-      
-        // assign account id and a few other properties then save
-        account.id = newAccountId();
-        account.dateCreated = new Date().toISOString();
-        account.isVerified = true;
-        account.refreshTokens = [];
-        delete account.confirmPassword;
-        accounts.push(account);
+    function deleteAccount() {
+        if (!isAuthenticated()) return unauthorized();
+        
+        const id = idFromUrl();
+        const accountIndex = accounts.findIndex((x: Account) => x.id === id);
+        
+        if (accountIndex === -1) return error('Account not found');
+        
+        accounts.splice(accountIndex, 1);
         localStorage.setItem(accountsKey, JSON.stringify(accounts));
-    
+        
         return ok();
     }
 
-    function updateAccount() {
-        if (!isAuthenticated()) return unauthorized();
-    
-        const params = body;
-        const id = idFromUrl();
-    
-        const account = accounts.find((x: Account) => x.id === id);
-    
-        if (!account) return error('Account not found');
-    
-        const current = currentAccount();
-        if (!current || !current.id) return unauthorized();
-    
-        if (account.id !== current.id && !isAuthorized(Role.Admin)) {
-            return unauthorized();
-        }
-    
-        if (!params.password) {
-            delete params.password;
-        }
-    
-        delete params.confirmPassword;
-    
-        Object.assign(account, params);
+    function createAccount() {
+        const account = body;
+        account.dateCreated = new Date().toISOString();
+        account.verificationToken = new Date().getTime().toString();
+        account.isVerified = false;
+        account.refreshTokens = [];
+        delete account.confirmpassword;
+        accounts.push(account);
         localStorage.setItem(accountsKey, JSON.stringify(accounts));
-    
-        return ok(basicDetails(account));
-    }
-    
-
-    function deleteAccount() { 
-        if (!isAuthenticated()) return unauthorized();
-    
-        const accountId = idFromUrl();
-        if (!accountId) return error('Account ID is required');
-    
-        const account = accounts.find((x: Account) => x.id === accountId);
-        if (!account) return error('Account not found');
-    
-        const current = currentAccount();
-        if (!current || !current.id) return unauthorized();
-    
-        if (account.id !== current.id && !isAuthorized(Role.Admin)) {
-            return unauthorized();
-        }
-    
-        accounts = accounts.filter((x: Account) => x.id !== accountId);
-        localStorage.setItem(accountsKey, JSON.stringify(accounts));
-    
         return ok();
     }
     
@@ -343,6 +276,21 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         const { id, title, firstName, lastName, email, role, dateCreated, isVerified } = account;
         return { id, title, firstName, lastName, email, role, dateCreated, isVerified };
     }
+
+    function updateAccount() {
+        if (!isAuthenticated()) return unauthorized();
+        
+        const id = idFromUrl();
+        const accountIndex = accounts.findIndex((x: Account) => x.id === id);
+        
+        if (accountIndex === -1) return error('Account not found');
+        
+        const account = { ...accounts[accountIndex], ...body };
+        accounts[accountIndex] = account;
+        localStorage.setItem(accountsKey, JSON.stringify(accounts));
+        
+        return ok(basicDetails(account));
+    }
       
       function isAuthenticated() {
         return !!currentAccount();
@@ -354,14 +302,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         return account.role === role;
     }
       
-      function idFromUrl() {
+      function idFromUrl(): string {
         const urlParts = url.split('/');
-        return parseInt(urlParts[urlParts.length - 1]);
+        const id = urlParts[urlParts.length - 1];
+        if (!id) return '';
+        return id.toString();
     }
     
     function newAccountId() { 
         const accounts: Account[] = JSON.parse(localStorage.getItem(accountsKey) || '[]');
-        return accounts.length ? Math.max(...accounts.map((x: Account) => x.id ? x.id : 0)) + 1 : 1;
+        return accounts.length ? Math.max(...accounts.map((x: Account) => x.id ? Number(x.id) : 0)) + 1 : 1;
     }
       
     function currentAccount(): Account | undefined {
