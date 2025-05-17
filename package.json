@@ -4,8 +4,5 @@
   "private": true,
   "scripts": {
     "build": "cd Frontend && npm ci && npm run build -- --prod"
-  },
-  "dependencies": {
-    "@angular/cli": "^17.0.0"
   }
 }

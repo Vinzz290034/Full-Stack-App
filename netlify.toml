@@ -1,11 +1,10 @@
 [build]
   base = "/"
   publish = "dist"
-  command = "npx ng build --prod"
+  command = "cd Frontend && npm ci && npm run build -- --prod"
 
 [build.environment]
   NODE_VERSION = "18"
-  PATH = "/opt/buildhome/.nvm/versions/node/v18.x.x/bin:$PATH"
 
 [[redirects]]
   from = "/*"
