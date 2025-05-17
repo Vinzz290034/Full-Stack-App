@@ -126,24 +126,33 @@ npm start
 - Comprehensive API documentation with Swagger
 - Input validation and error handling
 
-## Deployment
+## Deployment Instructions
 
-### Backend
-1. Set environment variables for production
-2. Configure HTTPS
-3. Use PM2 or similar process manager for Node.js
-4. Set up a reverse proxy (Nginx, Apache)
+### Backend Deployment (Required)
+1. Deploy the Backend directory to a Node.js-compatible hosting service (recommended: Heroku, DigitalOcean, or AWS)
+2. Set up environment variables from `.env.example`
+3. Configure a MySQL database
+4. Set up email service credentials
+5. The backend will run on port 4000 by default
 
-### Frontend (Vercel)
+### Frontend Deployment (Vercel)
 1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Vercel will automatically detect the Angular project and build it using the configuration in `vercel.json`
-4. The frontend will be deployed as a static site with automatic routing
+2. Go to Vercel (https://vercel.com)
+3. Create a new project
+4. Connect your GitHub repository
+5. In the project settings:
+   - Set the root directory to `Frontend`
+   - Add environment variables:
+     - `NEXT_PUBLIC_API_URL`: Your backend URL (from step 1)
+     - `NEXT_PUBLIC_EMAIL_USER`: Your email service username
+     - `NEXT_PUBLIC_EMAIL_PASS`: Your email service password
+6. Deploy the project
 
-### Alternative Frontend Deployment
-1. Build for production: `ng build --configuration production`
-2. Deploy the contents of `dist/` to a web server
-3. Configure the base URL to point to your backend API
+### Development Setup
+1. Backend: Run `docker-compose up -d` in the root directory
+2. Frontend: Run `ng serve` in the Frontend directory
+3. Access the application at http://localhost:4200
+4. The backend will be accessible at http://localhost:4000
 
 ## Testing
 
