@@ -1,6 +1,6 @@
-# Full Stack Application
+# User Management System
 
-This is a full-stack web application with a modern Angular frontend and a Node.js/Express backend. The application provides user authentication, profile management, and administrative features.
+A comprehensive user management system built with Angular 17 for the frontend and Node.js/Express for the backend. This system includes features like user authentication, profile management, email verification, and admin functionality.
 
 ## Project Structure
 
@@ -33,9 +33,9 @@ Full-Stack-App/
 ### Backend
 - **Runtime**: Node.js
 - **Framework**: Express.js
-- **Database**: MySQL with Sequelize ORM
+- **Database**: MySQL
 - **Authentication**: JWT (JSON Web Tokens)
-- **Email**: Nodemailer for email verification and password reset
+- **Email**: Nodemailer with Ethereal for email verification
 - **API Documentation**: Swagger/OpenAPI
 - **Validation**: Joi
 - **Security**: bcryptjs for password hashing
@@ -45,8 +45,10 @@ Full-Stack-App/
 - **Language**: TypeScript
 - **Styling**: Bootstrap 5
 - **State Management**: RxJS
-- **Testing**: Karma, Jasmine, Protractor
 - **Build Tool**: Angular CLI
+- **Routing**: Angular Router
+- **Forms**: Angular Reactive Forms
+- **HTTP Client**: Angular HttpClient with interceptors
 
 ## Prerequisites
 
