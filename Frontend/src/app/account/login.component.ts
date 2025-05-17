@@ -44,10 +44,13 @@ export class LoginComponent implements OnInit {
     this.accountService.login(this.f['email'].value, this.f['password'].value)
       .pipe(first())
       .subscribe({
-        next: () => {
+        next: (account) => {
           // get return url from query parameters or default to home page
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-          this.router.navigateByUrl(returnUrl);
+          this.router.navigateByUrl(returnUrl).then(() => {
+            // Force a re-render of the app component
+            this.router.navigate(['']);
+          });
         },
         error: error => {
           this.alertService.error(error);

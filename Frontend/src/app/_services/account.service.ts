@@ -28,8 +28,12 @@ export class AccountService {
       .pipe(
         map(account => {
           // Store user details and jwt token in local storage
-          this.accountSubject.next(account);
-          this.startRefreshTokenTimer();
+          if (account) {
+            this.accountSubject.next(account);
+            this.startRefreshTokenTimer();
+            // Store the account in localStorage
+            localStorage.setItem('account', JSON.stringify(account));
+          }
           return account;
         }),
         catchError(error => {

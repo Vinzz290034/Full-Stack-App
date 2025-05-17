@@ -34,7 +34,12 @@ function authorize(roles = []) {
             }
 
             req.user.role = account.role;
-            req.user.ownsToken = token => !!account.refreshTokens.find(x => x.token === token);
+            req.user.ownsToken = token => {
+                if (!account.refreshTokens) {
+                    return false;
+                }
+                return !!account.refreshTokens.find(x => x.token === token);
+            };
             next();
         }
     ];

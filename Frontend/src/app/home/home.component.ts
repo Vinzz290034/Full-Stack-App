@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AccountService } from '../_services';
+import { Account } from '../_models';
 
 @Component({ templateUrl: 'home.component.html' })
-export class HomeComponent {
-    account: any;
+export class HomeComponent implements OnInit {
+    account$!: Observable<Account | null>;
 
-    constructor(private accountService: AccountService) { 
-        // Ensure account has a fallback if it's undefined or null
-        this.account = this.accountService.accountValue || { firstName: 'Guest' };
+    constructor(private accountService: AccountService) { }
+
+    ngOnInit() {
+        this.account$ = this.accountService.account;
     }
 }
