@@ -1,7 +1,7 @@
 [build]
-  base = "/"
-  publish = "dist/user-management-system"
-  command = "cd Frontend && npm run build"
+  base = "Frontend"
+  publish = "dist"
+  command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -15,9 +15,3 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-[context.production]
-  command = "cd Frontend && npm run build:prod"
-  environment = {
-    NODE_ENV = "production"
-  }
