@@ -1,0 +1,10 @@
+{
+  "name": "user-management-system",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd Frontend && npm install && npm run build -- --prod"
+  },
+  "devDependencies": {
+    "@angular/cli": "^17.0.0"
+  }
+}
