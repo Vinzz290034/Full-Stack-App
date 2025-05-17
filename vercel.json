@@ -8,7 +8,12 @@
         "distDir": "dist",
         "framework": "angular",
         "installCommand": "npm install",
-        "buildCommand": "npm run build"
+        "buildCommand": "npm run build",
+        "env": {
+          "NEXT_PUBLIC_API_URL": "${NEXT_PUBLIC_API_URL}",
+          "NEXT_PUBLIC_EMAIL_USER": "${NEXT_PUBLIC_EMAIL_USER}",
+          "NEXT_PUBLIC_EMAIL_PASS": "${NEXT_PUBLIC_EMAIL_PASS}"
+        }
       }
     }
   ],
