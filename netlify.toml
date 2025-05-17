@@ -15,6 +15,3 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-[build.environment]
-  PATH = "/opt/buildhome/.nvm/versions/node/v18.x.x/bin:$PATH"
