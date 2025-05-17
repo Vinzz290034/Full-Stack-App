@@ -1,6 +1,6 @@
 [build]
   base = "Frontend"
-  publish = "dist"
+  publish = "dist/Frontend"
   command = "npm run build"
 
 [build.environment]
@@ -10,11 +10,17 @@
   command = "ng serve"
   port = 4200
 
-[functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["mysql2"]
-
 [[redirects]]
-  from = "/*"
+  from = "/"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/(*)"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
