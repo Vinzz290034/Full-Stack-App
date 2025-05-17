@@ -134,7 +134,13 @@ npm start
 3. Use PM2 or similar process manager for Node.js
 4. Set up a reverse proxy (Nginx, Apache)
 
-### Frontend
+### Frontend (Vercel)
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Vercel will automatically detect the Angular project and build it using the configuration in `vercel.json`
+4. The frontend will be deployed as a static site with automatic routing
+
+### Alternative Frontend Deployment
 1. Build for production: `ng build --configuration production`
 2. Deploy the contents of `dist/` to a web server
 3. Configure the base URL to point to your backend API
