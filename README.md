@@ -135,18 +135,20 @@ npm start
 4. Set up email service credentials
 5. The backend will run on port 4000 by default
 
-### Frontend Deployment (Vercel)
+### Frontend Deployment (Netlify)
 1. Push your code to GitHub
-2. Go to Vercel (https://vercel.com)
-3. Create a new project
+2. Go to Netlify (https://netlify.com)
+3. Create a new site from Git
 4. Connect your GitHub repository
-5. In the project settings:
-   - Set the root directory to `Frontend`
-   - Add environment variables:
-     - `NEXT_PUBLIC_API_URL`: Your backend URL (from step 1)
-     - `NEXT_PUBLIC_EMAIL_USER`: Your email service username
-     - `NEXT_PUBLIC_EMAIL_PASS`: Your email service password
-6. Deploy the project
+5. In the build settings:
+   - Build command: `npm run build`
+   - Publish directory: `Frontend/dist`
+   - Base directory: `Frontend`
+6. Add environment variables:
+   - `NEXT_PUBLIC_API_URL`: Your backend URL (from step 1)
+   - `NEXT_PUBLIC_EMAIL_USER`: Your email service username
+   - `NEXT_PUBLIC_EMAIL_PASS`: Your email service password
+7. Deploy the project
 
 ### Development Setup
 1. Backend: Run `docker-compose up -d` in the root directory
