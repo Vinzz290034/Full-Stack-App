@@ -3,9 +3,9 @@
 # Set environment variables
 $env:DB_HOST = "localhost"
 $env:DB_PORT = "3306"
-$env:DB_NAME = "employee_management"
-$env:DB_USER = "root"
-$env:DB_PASSWORD = "Anyaforger_290034"
+$env:DB_NAME = "u875409848_santoya"
+$env:DB_USER = "u875409848_santoya"
+$env:DB_PASSWORD = "9T2Z5$3UKkgSYzE"
 
 # Create the database if it doesn't exist
 Write-Host "Creating database $env:DB_NAME..." -ForegroundColor Cyan
