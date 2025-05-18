@@ -13,7 +13,10 @@
         "lint:fix": "eslint . --ext .js --fix",
         "test": "cross-env NODE_ENV=test jest --coverage",
         "test:watch": "cross-env NODE_ENV=test jest --watch",
-        "test:coverage": "cross-env NODE_ENV=test jest --coverage --coverageDirectory='coverage'"
+        "test:coverage": "cross-env NODE_ENV=test jest --coverage --coverageDirectory='coverage'",
+        "build": "echo 'No build needed for Node.js backend'",
+        "dev": "npm run start:dev",
+        "vercel-build": "echo 'No build needed for Node.js backend'"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",

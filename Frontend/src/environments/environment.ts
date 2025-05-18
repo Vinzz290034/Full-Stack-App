@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000/api'
+  apiUrl: 'https://user-management-system-ao6u5ovx5-vinzzzs-projects-fba675e8.vercel.app/api'
 };
   
 /*

@@ -1,19 +1,19 @@
 {
     "database": {
-      "host": "153.92.15.31",
-      "port": 3306,
-      "user": "u875409848_santoya",
-      "password": "9T2Z5$3UKkgSYzE",
-      "database": "u875409848_santoya"
+      "host": "${DATABASE_HOST}",
+      "port": "${DATABASE_PORT}",
+      "user": "${DATABASE_USER}",
+      "password": "${DATABASE_PASSWORD}",
+      "database": "${DATABASE_NAME}"
     },
-    "secret": "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-    "emailFrom": "info@node-mysql-signup-verification-api.com",
+    "secret": "${JWT_SECRET}",
+    "emailFrom": "${EMAIL_FROM}",
     "smtpOptions": {
-      "host": "smtp.ethereal.email",
-      "port": 587,
+      "host": "${SMTP_HOST}",
+      "port": "${SMTP_PORT}",
       "auth": {
-        "user": "wendell.lowe@ethereal.email",
-        "pass": "2CtZEn6rNKneXuHfXE"
+        "user": "${SMTP_USER}",
+        "pass": "${SMTP_PASS}"
       }
     }
   }
